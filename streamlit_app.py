@@ -87,7 +87,7 @@ st.write(
     There are few missing values present in this subset:  
     between **0.02% and 9%** across **7 attributes**.
 
-    As the proportion of missing data is low, imputation was performed **after the train/test split**.
+    It was decided to impute the missing values **after the train/test split**, as common practice.
 
     **Imputation strategy:**
     - Numerical variables were imputed using **KNN imputation (k = 5)**
@@ -126,11 +126,125 @@ var_names = {
     'GLUCOSE' : 'Glucose'
 
 }
-
 selected_variable = st.selectbox(
     "Select a numeric variable to visualize",
     num_variables
 )
+
 fig, ax = plt.subplots()
-sns.boxplot(data=cvd_death[selected_variable], orient="v")
-ax.set(title= var_names[selected_variable], xlabel= var_names[selected_variable], ylabel = 'Count')
+
+sns.boxplot(
+    data=cvd_death[selected_variable],
+    orient="v",
+    ax=ax       
+)
+
+ax.set(
+    title=var_names[selected_variable],
+    xlabel=var_names[selected_variable],
+    ylabel='Value'
+)
+
+st.pyplot(fig)  
+
+st.write(
+    '''
+- colesterol lower than 120 and higher than 500 are probably outliers --> impute!
+- there are no outliers for age
+- systolic blood pressure, possible in a diseased condition
+- dyastolic blood pressure, possible in a diseased condition
+- bmi higher than 35 reflects an obese condition
+- heart rate is plausible
+- very high glucose levels indicate diabetes'''
+)
+
+st.title("Distribution of numerical variables")
+#distribution of the data
+selected_hist = st.selectbox("Select a numeric variable to visualize", num_variables, key="hist_selectbox")
+
+# Histogram
+fig2, ax = plt.subplots()
+
+ax.hist(cvd_death[selected_hist], edgecolor='black', bins=20, color='lightblue')
+
+ax.set(title=var_names[selected_hist], xlabel=var_names[selected_hist], ylabel='Count')
+
+st.pyplot(fig2)
+
+#visualization of categorical variables
+
+#identification of categorical variables
+categorical_variables = ['SEX', 'CURSMOKE', 'DIABETES', 'BPMEDS','PREVCHD', 'PREVAP', 'PREVMI', 'PREVSTRK', 'PREVHYP', 'ANGINA', 'HOSPMI', 'MI_FCHD', 'ANYCHD', 'STROKE', 'CVD', 'HYPERTEN','DEATH', 'educ']
+
+#creation fo a dictionary with metadata description
+categorical_names = {
+    'SEX': 'Sex',
+    'CURSMOKE': 'Current Smoking Status',
+    'DIABETES': 'Diabetes Status',
+    'BPMEDS': 'Use of Blood Pressure Medications',
+    'PREVAP': 'Prevalent Angina Pectoris',
+    'PREVMI': 'Prevalent Miocardial Infraction',
+    'PREVSTRK': 'Prevalent Stroke',
+    'PREVHYP': 'Prevalent Hypertension',
+    'ANGINA': 'Presence of Angina at the time of collection',
+    'HOSPMI': 'Hospitalized for Myocardial Infraction',
+    'MI_FCHD': 'Hospitalized Myocardial Infarction or Fatal Coronary Heart Disease',
+    'ANYCHD': 'Any Form of Coronary Heart Disease',
+    'STROKE': 'Stroke Event Follow-up',
+    'CVD': 'Any Cardiovascular Disease Event Follow-up',
+    'HYPERTEN': 'Hypertension Follow-up',
+    'educ': 'Education Level',
+    'PREVCHD': 'Plevalent Coronary Heart Disease',
+    'DEATH': 'Death'
+}
+
+#barplot to visualize categorical variables
+st.title('Categorical variables')
+selected_bar = st.selectbox("Select a categorical variable to visualize", categorical_variables, key="barplot")
+
+fig3, ax = plt.subplots()
+counts = cvd_death[selected_bar].value_counts()
+ax.bar(counts.index, counts.values, edgecolor='black', color = ['lightblue', 'lightpink'])
+ax.bar_label(ax.containers[0])
+ax.set(title= categorical_names[selected_bar], xlabel= categorical_names[selected_bar], ylabel= 'Count')
+st.pyplot(fig3)
+
+#visualization of the target variable 
+
+# Distribution of DEATH
+st.write('**Death distribution**')
+death_counts = cvd_death['DEATH'].value_counts()
+
+fig, ax = plt.subplots()
+
+ax.pie(death_counts.values, labels=['Alive', 'Dead'], autopct='%1.1f%%', startangle=90, colors=['lightblue', 'pink'])
+
+ax.set(title='Distribution of Death Outcome')
+
+# Show in Streamlit
+st.pyplot(fig)
+
+
+
+#bivariate analysis
+st.title('Bivariate analysis')
+
+#categorical variables vs death
+selected_cat = st.selectbox("Select a categorical variable to visualize", categorical_variables, key="categorical_barplot")
+
+counts = cvd_death.groupby(['DEATH', selected_cat]).size().unstack()
+
+# Bar plot
+ax = counts.plot(kind='bar', edgecolor='black', color=['pink', 'lightblue', 'lightgreen', 'lightyellow'], rot=0)
+
+ax.set(title=categorical_names[selected_cat], xlabel=categorical_names[selected_cat], ylabel='Count')
+
+st.pyplot(ax.figure)
+
+#gropbyfuction to see the difference between died and survived for the categorical variables
+
+st.write('Difference in numerical variables for death and survived')
+mean_table = cvd_death.groupby('DEATH')[num_variables].mean()
+
+st.dataframe(mean_table)
+
