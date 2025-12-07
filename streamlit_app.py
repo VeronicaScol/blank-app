@@ -248,3 +248,161 @@ mean_table = cvd_death.groupby('DEATH')[num_variables].mean()
 
 st.dataframe(mean_table)
 
+# Final dataframe and features
+st.title("Preparing the data for our models")
+st.write(""" 
+         **Features used in the model**
+         -
+          """)
+st.write("Several time-related features were removed from the dataframe, and the dataframe was split into X and y which resulted in these final dataframes:")
+
+cvd_death['DEATH'] = cvd_death['DEATH'].replace({'survived': 0, 'died': 1});
+X = cvd_death[['SEX', 'CURSMOKE', 'DIABETES', 'BPMEDS', 'PREVCHD', 'PREVAP',
+                'PREVMI', 'PREVSTRK', 'PREVHYP', 'ANGINA', 'HOSPMI', 'MI_FCHD',
+                'ANYCHD', 'STROKE', 'CVD', 'HYPERTEN', 'educ', 'TOTCHOL', 'AGE',
+                'SYSBP', 'DIABP', 'CIGPDAY', 'BMI', 'HEARTRTE', 'GLUCOSE']]
+
+y = cvd_death['DEATH']
+
+st.write("X (" + str(len(X.columns)) + " features): ", )
+st.dataframe(X.head(3))
+st.write("y (outcome is " + str(y.name.lower()) + "):")
+st.dataframe(y.head(3))
+
+#Train Test Split
+
+from sklearn.model_selection import train_test_split
+train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.2, random_state=1)
+
+st.write(""" 
+         **Train-Test split**
+         -
+         The dataframe was split into a training and testing set using sklearn train_test_split with randomstate = 1 and test_size = 0.2)
+         This created: 
+         - train_X
+         - test_X
+         - train_y
+         - test_y
+         """)
+
+
+st.write("The train sets have " + str(train_X.shape[0]) + " rows, "
+         "and the test sets have " + str(test_X.shape[0]) + " rows")
+
+# Imputing missing data
+st.write(""" 
+         **Missing data imputation**
+         -
+         The missing data in these train sets were then imputed using:
+         - The KNN imputer from sklearn using 5 n-nearest neighbours was applied to numerical features
+         - The simple imputer from sklearn using the mode was applied to catagorical features
+         - The imputers were fitted only on train data and then applied to test to avoid data leakage
+          """)
+
+from sklearn.impute import KNNImputer, SimpleImputer
+import numpy as np
+
+# Create list of numeric and catagorical features:
+NumCols = train_X.select_dtypes(include = "number").columns
+CatCol = train_X.select_dtypes(include=['object']).columns
+
+#See missing data
+MissingCheck = train_X.isnull().sum()
+MissingCols = MissingCheck[MissingCheck > 0]
+MissingCols = MissingCols.rename("Missing count")
+
+# Getting a list for later use
+missing_col_names = MissingCols.index.tolist()
+
+#Displaying missing data
+st.write("""
+         The tables and graphs below show train_X for the full picture since test_X had less columns with missing values
+         
+         Columns with missing values:
+         
+         """)
+st.write(MissingCols)
+
+#Copies so they can still be plotted after imputations to compare
+train_X_NoImpute = train_X.copy()
+
+# KNN imputation
+imputer = KNNImputer(n_neighbors = 5)
+train_X[NumCols] = imputer.fit_transform(train_X[NumCols])
+test_X[NumCols] = imputer.transform(test_X[NumCols])
+
+# Mode imputation
+cat_imputer = SimpleImputer(missing_values=np.nan, strategy="most_frequent")
+train_X[CatCol] = cat_imputer.fit_transform(train_X[CatCol])
+test_X[CatCol] = cat_imputer.transform(test_X[CatCol])
+
+# Creating a select box for a feature to check
+selected_discheck = st.selectbox("Select a feature to check if distributions after imputation are the similar and have not been affected:", 
+                                 missing_col_names,
+                                 key="discheck")
+
+#Checking if a histogram or bar graph should be displayed by seeing if the column is numerical or catagorical
+if selected_discheck in NumCols: 
+    # Making a single figure that has two graphs made next to eachother
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (10, 5))
+
+    #Graph one before impute
+    ax1.hist(train_X_NoImpute[selected_discheck],
+             bins = 10, 
+             edgecolor='black', 
+             color = 'lightblue')
+    ax1.set(
+        title = "Distribution before imputation",
+        xlabel = var_names[selected_discheck],
+        ylabel = "Value"
+    )
+
+    #Graph two after impute
+    ax2.hist(train_X[selected_discheck],
+            bins = 10, 
+            edgecolor='black', 
+            color = 'lightblue')
+    ax2.set(
+        title = "Distribution after imputation",
+        xlabel = var_names[selected_discheck],
+        ylabel = "Value"
+    )
+
+    st.pyplot(fig)
+else:
+    # Making a single figure that has two graphs made next to eachother
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (15, 5))
+    
+    # Creating counts before and after the imputation
+    counts_before = train_X_NoImpute[selected_discheck].value_counts().sort_index()
+    counts_after = train_X[selected_discheck].value_counts().sort_index()
+
+    #Graph one before impute
+    ax1.bar(counts_before.index,
+            counts_before.values, 
+             edgecolor='black', 
+             color = ['lightblue', "lightpink"])
+    ax1.set(
+        title = "Count before imputation",
+        xlabel = categorical_names[selected_discheck],
+        ylabel = "Value"
+    )
+
+    #Graph two after impute
+    ax2.bar(counts_after.index,
+            counts_after.values, 
+             edgecolor='black', 
+             color = ['lightblue', "lightpink"])
+    ax2.set(
+        title = "Count after imputation",
+        xlabel = categorical_names[selected_discheck],
+        ylabel = "Value"
+    )
+
+    st.pyplot(fig)
+
+# Scaling
+st.write(""" 
+         **Scaling of the data**
+         -
+         """)
