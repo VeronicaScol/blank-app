@@ -203,14 +203,24 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         - Diastolic blood pressure: values higher than 120 mmHg indicate a hypertensive crisis. These values were not removed because they are physiologically possible.
         - BMI values above 35 reflect an obese condition. BMI values higher than 50 are physiologically plausible.
         - Heart rate values between 40 and 140 bpm are plausible.
-        - Very high glucose levels indicate diabetes. Values higher than 180 mg/dL indicate hyperglycemia. Extreme values around 400 mg/dL could be related to uncontrolled diabetes.
+        - Very high glucose levels indicate diabetes. Values higher than 180 mg/dL indicate hyperglycemia. Extreme values around 400 mg/dL could be related to uncontrolled diabetes. The glucose represented is casual serum glucose, which showed a relationship with increased risk of CVD and mortality (https://drc.bmj.com/content/9/1/e001928).
         """
         )
     
     #4. Erroneous Data
     st.markdown('###  *Erroneous Data*')
-    st.write('to be defined')
+    st.write("""
+             - From the outlier detection we noticed that cholesterol higher than 500 mg/dL might be linked to measurement errors.
+             - We decided to check fro internal consistency: high glucose values should be present in patients with diabetes, non-smokers should smoke 0 cigarettes per day, and diastolic blood pressure higher than systolic.
+             """)
 
+    #High glucose levels: if a patient doesn't have diabetes but has a colesterol higher than 120 mg/dL, this might be an erroneous data.
+    cvd_death[(cvd_death['DIABETES'] == 'not a diabetic') & (cvd_death['GLUCOSE'] > 200)]
+    st.write('There are not patients without diabetes but with a glucose higher than 200 mg/dL. (https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis#:~:text=Table_title:%20Test%20results%20for%20diagnosis%20of%20prediabetes,Plasma%20Glucose:%20126%20mg/dL%20or%20above%20%7C)')
+
+    #Non smokers should smoke 0 cigarettes per day
+    cvd_death[(cvd_death['CURSMOKE'] == 'not current smoker') & (cvd_death['CIGPDAY'] > 0)]
+    st.write('')
 
     #5. Erroneous Data
     st.markdown('###  *Distribution of numerical variables*')
