@@ -733,6 +733,10 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
             - Random Forest Classifier with 200 estimators, random state 1 and a max depth of 10
             - All models use a balanced class weight
 
+            Three subsets of features were tested for every model:
+             - all the features 
+             - top 15 features wrapper and filter subsets to reduce model complexity, while keeping the most important predictors.
+
             Performance is judged on:
             - Accuracy
             - Precision
@@ -809,6 +813,10 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
             
              When predicting death it is crucial to have a good balance between identifying true deaths, without raising false alarms. 
              As a consequence, the SVM model was selected as the best one as it showed the best F1-score.
+
+             It was decided to use the top 75% best performing clinically wrapper features to reduce model complexity while improving performance.
+             This could lead to statistical bias in the model. This was mitigated by checking that all the features were clinically relevant,
+              and if any should have been removed first.
 
             """)
 
