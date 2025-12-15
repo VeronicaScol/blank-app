@@ -213,7 +213,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
         ***Imputation strategy***
 
-        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were windsorized at the corrisponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
+        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were winsorized at the corrisponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
         The datapoints outside the interquartile range for the number of cigarettes smoked per day were clipped at the third quartile.
 
         """
