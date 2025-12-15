@@ -13,10 +13,9 @@ with st.expander("## GENERAL DESCRIPTION OF THE FRAMINGHAM HEART DISEASE STUDY")
     st.markdown("##  GENERAL OVERVIEW OF THE STUDY")
 
     st.write(
-        "The Framingham Heart Study is the **first prospective study** of cardiovascular disease (CVD). It was used to identified CVD risks factors and their combined effects. " \
+        "The Framingham Heart Study is the **first prospective study** of cardiovascular disease (CVD). It was used to identify CVD risk factors and their combined effects. " \
         "The study began in 1948 among a population of free-living subjects in the community of Framingham, Massachusetts. Initially, 5209 people were enrolled. In the subset analyzed, there are **4434 patients**, each of them with **three examination periods** aproximately every 6 years. Each partecipant was followed for 24 years to detect the following outcomes: **angina pectoris, myocardial infraction, Atherothrombotic Infarction or Cerebral Hemorrhage (Stroke) or Death**. (1)"
     )
-    #source: https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html
 
     #data loading
     cvd = pd.read_csv('https://raw.githubusercontent.com/LUCE-Blockchain/Databases-for-teaching/refs/heads/main/Framingham%20Dataset.csv')
@@ -35,7 +34,7 @@ with st.expander("## GENERAL DESCRIPTION OF THE FRAMINGHAM HEART DISEASE STUDY")
 ## SECTION 2: RESEARCH QUESTION AND SUBSET CREATION
 with st.expander("## RESEARCH QUESTION AND SUBSET CREATION"):
 
-    st.markdown('## ***To what extenct can baseline health indicators predict all-cause death?***')
+    st.markdown('## ***To what extent can baseline health indicators predict all-cause death?***')
 
     st.markdown(
         """
@@ -162,8 +161,8 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
         *Imputation strategy*:
 
-        * **Numerical variables** were imputed using K-Nearest Neighbours imputation (k = 5).
-        * **Categorical variables** were imputed using the mode (most frequent value).
+        * **Numerical variables** were imputed using K-Nearest Neighbours imputation (k = 5). 
+        * **Categorical variables** were imputed using the mode (most frequent value). 
         """
     )
 
@@ -201,21 +200,21 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #explanation
     st.write(
         """
-        - Cholesterol levels higher than 500 mg/dL may indicate not only outliers, but also measurement errors.
-        These extreme values are rare and usually related only to a few specific medical conditions (https://pubmed.ncbi.nlm.nih.gov/24404629/).
+        - Cholesterol levels higher than 500 mg/dL were considered potential outliers.
+        These extreme values are rare and usually related only to a few specific medical conditions (2).
         Values lower than 500 mg/dL are physiologically possible and could be correlated to increased risk of CVD.
         - There are no outliers for age.
-        - Systolic blood pressure higher than 180 mmHg indicate a hypertensive crisis, and high values are associated with CVD. However, systolic pressures above 260 mmHg may be related to measurement errors.
-        - In diastolic blood pressure values higher than 120 mmHg indicate a hypertensive crisis. These values were not removed because they are physiologically possible (https://www.ncbi.nlm.nih.gov/books/NBK507701/).
-        - For the number of cigarettes smoked per day, there were some values outside the IQR. It was decided to clip them at Q3, because even if these values are plausible, they are extremly high.
-        - BMI values above 35 reflect an obese condition. BMI values higher than 50 are physiologically plausible.
-        - Heart rate values between 40 and 140 bpm are plausible.
-        - Very high glucose levels indicate diabetes. Values higher than 180 mg/dL indicate hyperglycemia. Extreme values around 400 mg/dL could be related to uncontrolled diabetes. Values over 300 mg/dL were considered as outliers, because these values imply emergency care. The glucose represented is casual serum glucose, which showed a relationship with increased risk of CVD and mortality (https://drc.bmj.com/content/9/1/e001928).
+        - Systolic blood pressure higher than 180 mmHg indicate a hypertensive crisis (3). Values above 260 mmHg were considered outliers.
+        - In diastolic blood pressure values higher than 120 mmHg indicate a hypertensive crisis. However, these values were not removed because they remain physiologically possible (3).
+        - For the number of cigarettes smoked per day, few values were outside the interquirtile range (IQR). Even if these values are plausible, it was decided to clip them at Q3.
+        - BMI values above 35 reflect an obese condition. Even if outside the IQR, values higher than 50 are physiologically plausible.
+        - Heart rate values between 40 and 140 bpm are possible.
+        - Very high glucose levels are indicative of diabetes. Values higher than 180 mg/dL indicate hyperglycemia, and extreme values around 400 mg/dL could be related to uncontrolled diabetes. Values over 300 mg/dL were considered as outliers, because these values imply emergency care. The glucose represented is casual serum glucose, which showed a relationship with increased risk of CVD and mortality (4).
 
         ***Imputation strategy***
 
-        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were clipped at that specific value.
-        The datapoints outside the interquartile range of number of cigarettes smokes per day were clipped at Q3.
+        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were windsorized at the corrisponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
+        The datapoints outside the interquartile range for the number of cigarettes smokes per day were clipped at the third quartile.
 
         """
         )
@@ -224,14 +223,14 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     st.markdown('###  *Erroneous Data*')
     st.write("""
                 - It was decided to check for internal consistency:
-                - partecipants without diabetes are not expected to have glucose levels above 200 mg/dL (https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis#:~:text=Table_title:%20Test%20results%20for%20diagnosis%20of%20prediabetes,Plasma%20Glucose:%20126%20mg/dL%20or%20above%20%7C)
-                - non-smokers should smoke 0 cigarettes per day,
-                - diastolic blood pressure can't be higher than systolic.
+                - partecipants without diabetes were not expected to have glucose levels above 200 mg/dL (5)
+                - non-smokers were expected to smoke 0 cigarettes per day,
+                - diastolic blood pressure cannot be higher than systolic blood pressure.
              """)
 
     #High glucose levels: if a patient doesn't have diabetes but has a glucose higher than 200 mg/dL, this might be an erroneous data.
     cvd_death.loc[(cvd_death['DIABETES'] == 'not a diabetic') & (cvd_death['GLUCOSE'] > 200)]
-    st.write('There are not patients without diabetes but with a glucose higher than 200 mg/dL. ')
+    st.write('There are no patients without diabete,s but with a glucose higher than 200 mg/dL. ')
 
     #Non smokers should smoke 0 cigarettes per day
     cvd_death.loc[(cvd_death['CURSMOKE'] == 'not current smoker') & (cvd_death['CIGPDAY'] > 0)]
@@ -263,9 +262,9 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #description
     st.write(
         """
-        * Cholesterol, systolic blood pressure, and glucose have a right-skewed normal distribution.
-        * Age has a slight bimodal distribution.
-        * Diastolic blood pressure, BMI, and heart rate display a normal distribution, slightly right-skewed.
+        * Cholesterol, systolic blood pressure, and glucose have a right-skewed distribution.
+        * Age has a slightly bimodal distribution.
+        * Diastolic blood pressure, BMI, and heart rate show a normal distribution, slightly right-skewed.
         * The number of cigarettes smoked shows a high number of zeros, due to non-smokers. The distribution of the other values roughly resembles a normal distribution.
         """
         )
@@ -310,10 +309,10 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #explanation
     st.markdown(
                 """
-                The histograms are used to better visualize the population described with the descriptive statistics table.
+                Histograms are used to better visualize the population described in the descriptive statistics table.
                 The dataset is balanced regarding sex and smoking status.
-                However, it shows high imbalance for diabetic status, use of blood pressure medications, prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke), where only 0.7- 4.4% of the population shows.
-                32.3% of the people have prevalent hypertension, and 16.4% report angina at the time of collection.
+                However, it shows high imbalance in diabetic status, use of blood pressure medications, prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke), which are present in only 0.7- 4.4% of the population.
+                32.3% of the people have prevalent hypertension, and 16.4% report angina at the time of data collection.
                 The most common education level is higher secondary with 42.2%, followed by graduation with 29.6%.
                 """ )
 
@@ -359,7 +358,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     mean_table = cvd_death.groupby('DEATH')[num_variables].mean()
     st.dataframe(mean_table)
     st.markdown("""
-                It is possible to observe that all the numerical variables are higher in the death population compared to the survived, indicating that higher values could be related to higher risk of death.
+                It is possible to observe that all the numerical variables are higher in the death population compared to the survived, indicating that higher values could be related to a higher risk of death.
                 """)
 
 ##SECTION 4: MISSING DATA IMPUTATION, ENCODING, SCALING
@@ -804,12 +803,12 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
              ### *Model performance*
              All the models showed limited performance in predicting death.
             
-             - The model with logistic regression that uses the top 15 wrapper features has the highest recall for the death class (0.7290). 
-             - The Random Forest classifier with the top 15 wrapper features shows the highest precision for the target class (0.6522). 
-             - The Support Vector Machine with the top 15 wrapper features has the highest F1-score (0.6512).
+             - The model with logistic regression that uses the top 15 wrapper features achieved the highest recall for the death class (0.7290). 
+             - The Random Forest classifier with the top 15 wrapper features showed the highest precision for the target class (0.6522). 
+             - The Support Vector Machine with the top 15 wrapper features had the highest F1-score (0.6512).
             
              When predicting death it is crucial to have a good balance between identifying true deaths, without raising false alarms. 
-             This is the reason why the SVM model was selected as the best one.
+             As a consequence, the SVM model was selected as the best one as it showed the best F1-score.
 
             """)
 
@@ -887,11 +886,10 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     st.write(
         """
         # *CONCLUSION*
-        The final model achieved a cross-validated ROC AUC of 0.7972 and a F1 score of 0.7078.
-        The discriminative performance is low and it can't be used in clinical settings.
+        This research aimed to understand to what extent baseline health indicators can predict all-cause death. 
+        To answer this research question, a subset of the initial dataset was created and data exploration and cleaning were performed. 
+        Several models were used to predict death. The best model was Support Vector Machine with the top 15 wrapper features. It achieved a cross-validated ROC AUC of 0.7972 and a macro F1 score of 0.7078.
+        The discriminative performance of this model is low and it can't be used in clinical settings.
         It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death.
-        Further research could be done on period 2 and 3 to visualize how these follow-up periods modify the performance.
-        Additionally, all cause death prediction is challenging as there could be different causes, which are not captured by limited health indicators.
-        It might be informative to compare these results to death caused by CVD.
         """
     )
