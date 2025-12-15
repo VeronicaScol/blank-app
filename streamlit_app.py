@@ -835,23 +835,19 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     from sklearn.model_selection import cross_validate
 
     # New final model since the last is only in the function and not saved outside
-    ModelFinal = RandomForestClassifier(n_estimators = 200, random_state = 1,  class_weight = "balanced", max_depth = 10)
+    ModelFinal = SVC(kernel = "linear", class_weight = "balanced", probability = True, random_state = 1)
 
     # Scoring methods that are used, macro is because of class inbalance
     scoring = ["accuracy", "roc_auc", "f1_macro", "precision_macro", "recall_macro"]
 
     #cross validation used
-    cv = SVC(class_weight = 'balanced', kernel = "linear", probability = True)
+    cv = RepeatedKFold(n_splits = 5, n_repeats = 10, random_state = 1)
 
     #Same code as before but now outside of the function
     # and if statements so it is saved and can be used
     train_X_crossval = train_X[Top15SVMWrap]
 
-    # This is again a step that takes long so its cached,
-    #  nothing is passed to the function because that is giving
-    # an error that it cannot be hashed?
-    # So now eveything is directly in the function already, we just need to run it
-    @st.cache_data
+    #run cross validation
     def run_cv():
         return cross_validate(
             ModelFinal,
@@ -880,6 +876,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     StdPrecision_macro = scores_df["test_precision_macro"].std()
     StdRecall_macro = scores_df["test_recall_macro"].std()
 
+
     # Writing it down in a nice and rounded format
     st.write("Accuracy: " + str(round(MeanAcc, 4)) + " ± " + str(round(StdAcc, 3)))
     st.write("ROC AUC: " + str(round(MeanRoc, 4)) + " ± " + str(round(StdRoc, 3)))
@@ -890,7 +887,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     st.write(
         """
         # *CONCLUSION*
-        The final model achieved a cross-validated ROC AUC of 0.7853 and a F1 score of 0.7171.
+        The final model achieved a cross-validated ROC AUC of 0.7972 and a F1 score of 0.7078.
         The discriminative performance is low and it can't be used in clinical settings.
         It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death.
         Further research could be done on period 2 and 3 to visualize how these follow-up periods modify the performance.
