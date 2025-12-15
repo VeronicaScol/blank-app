@@ -893,3 +893,17 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
         It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death.
         """
     )
+
+with st.expander("## SOURCES"):
+    st.write(
+        """
+        References
+        1. R: The “framingham” data set. (n.d.). Retrieved December 15, 2025, from R-project.org website: https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html
+        2. Ison, H. E., Clarke, S. L., & Knowles, J. W. (1993). Familial hypercholesterolemia. In GeneReviews(®). Seattle (WA): University of Washington, Seattle.
+        3. Ahmed, I., Chauhan, S., & Afzal, M. (2025). Hypertensive crisis. In StatPearls. Treasure Island (FL): StatPearls Publishing.
+        4. Riise, H. K. R., Igland, J., Sulo, G., Graue, M., Haltbakk, J., Tell, G. S., & Iversen, M. M. (2021). Casual blood glucose and subsequent cardiovascular disease and all-cause mortality among 159 731 participants in Cohort of Norway (CONOR). BMJ Open Diabetes Research & Care, 9(1), e001928. doi:10.1136/bmjdrc-2020-001928
+
+        5. Diabetes tests & diagnosis. (2025, August 11). Retrieved December 15, 2025, from National Institute of Diabetes and Digestive and Kidney Diseases website: https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis#:~:text=Table_title:%20Test%20results%20for%20diagnosis%20of%20prediabetes,Plasma%20Glucose:%20126%20mg/dL%20or%20above%20%7C
+
+        """
+        )
