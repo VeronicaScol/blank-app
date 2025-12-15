@@ -14,7 +14,7 @@ with st.expander("## GENERAL DESCRIPTION OF THE FRAMINGHAM HEART DISEASE STUDY")
 
     st.write(
         "The Framingham Heart Study is the **first prospective study** of cardiovascular disease (CVD). It was used to identify CVD risk factors and their combined effects. " \
-        "The study began in 1948 among a population of free-living subjects in the community of Framingham, Massachusetts. Initially, 5209 people were enrolled. In the subset analyzed, there are **4434 patients**, each of them with **three examination periods** aproximately every 6 years. Each partecipant was followed for 24 years to detect the following outcomes: **angina pectoris, myocardial infraction, Atherothrombotic Infarction or Cerebral Hemorrhage (Stroke) or Death**. (1)"
+        "The study began in 1948 among a population of free-living subjects in the community of Framingham, Massachusetts. Initially, 5209 people were enrolled. In the subset analyzed, there are **4434 patients**, each of them with **three examination periods** approximately every 6 years. Each participant was followed for 24 years to detect the following outcomes: **angina pectoris, myocardial infarction, Atherothrombotic Infarction or Cerebral Hemorrhage (Stroke) or Death**. (1)"
     )
 
     #data loading
@@ -68,7 +68,7 @@ with st.expander("## RESEARCH QUESTION AND SUBSET CREATION"):
     cvd['HYPERTEN'] = cvd['HYPERTEN'].replace({0: 'did not occur during followup', 1:'did occur during followup'})
     cvd['educ'] = cvd['educ'].replace({1: 'higher secondary', 2:'graduation', 3:'post graduation', 4: 'PhD'})
 
-    #subset creation: only partecipants from period 1 were selected
+    #subset creation: only participants from period 1 were selected
     cvd_death = cvd.loc[(cvd['PERIOD'] == 'period 1')]
     #all the columns related to time, outcomes, HDL and LDL were removed
     cvd_death = cvd_death.drop(columns = ['TIMEAP', 'TIMEMI', 'TIMEMIFC', 'TIMECHD', 'TIMESTRK', 'TIMECVD', 'TIMEHYP', 'HDLC', 'LDLC', 'TIME', 'PERIOD', 'TIMEDTH', 'ANGINA', 'HOSPMI', 'MI_FCHD', 'ANYCHD', 'STROKE', 'CVD', 'HYPERTEN'])
@@ -116,7 +116,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         """
         In this subset with patients from Period 1, 56% are women and 51% non-smokers.
         The majority are not diabetic and free of prevalent diseases.
-        Most partecipants are middle-aged, with a mean of 50 years old.
+        Most participants are middle-aged, with a mean of 50 years old.
         The mean cholesterol is 237 mg/dL, which is borderline high, and the mean BMI is 25.8 (overweight).
         The mean systolic (133 mmHg) and diastolic (83 mmHg) blood pressure suggest potential hypertensive individuals.
         The mean glucose is 82 mg/dL, which represents normal levels.
@@ -133,7 +133,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     missing_percentage = cvd_death.isnull().mean() * 100
     missing_percentage = missing_percentage[missing_percentage > 0]
 
-    #visual rapresentation of the missing data
+    #visual representation of the missing data
     fig, ax = plt.subplots()
     ax.set(title = "Missing data",
             xlabel = "Percent missing",
@@ -178,7 +178,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         'TOTCHOL' : 'Total Cholesterol (mg/dL)',
         'AGE' : 'Age',
         'SYSBP' : 'Systolic Blood Pressure (mmHg)',
-        'DIABP' : 'Diastolic Bloop Pressure (mmHg)',
+        'DIABP' : 'Diastolic Blood Pressure (mmHg)',
         'CIGPDAY' : 'Number of cigarettes per day',
         'BMI' : 'Body Mass Index',
         'HEARTRTE' : 'Heart Rate',
@@ -186,7 +186,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
     }
 
-    #slectbox to visulize a boxplot showing possible outliers
+    #selectbox to visulaize a boxplot showing possible outliers
     selected_variable = st.selectbox(
         "Select a numeric variable to visualize:",
         num_variables
@@ -213,7 +213,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
         ***Imputation strategy***
 
-        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were winsorized at the corrisponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
+        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were winsorized at the corresponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
         The datapoints outside the interquartile range for the number of cigarettes smoked per day were clipped at the third quartile.
 
         """
@@ -282,17 +282,17 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         'DIABETES': 'Diabetes Status',
         'BPMEDS': 'Use of Blood Pressure Medications',
         'PREVAP': 'Prevalent Angina Pectoris',
-        'PREVMI': 'Prevalent Miocardial Infraction',
+        'PREVMI': 'Prevalent Myocardial Infraction',
         'PREVSTRK': 'Prevalent Stroke',
         'PREVHYP': 'Prevalent Hypertension',
         'educ': 'Education Level',
-        'PREVCHD': 'Plevalent Coronary Heart Disease',
+        'PREVCHD': 'Prevalent Coronary Heart Disease',
         'DEATH': 'Death'
     }
 
     st.markdown('###  *Categorical variables visualization*')
 
-    #bselectbox to visualize categorical variables
+    #selectbox to visualize categorical variables
     selected_bar = st.selectbox("Select a categorical variable to visualize", categorical_variables, key="barplot")
 
     #barplot to visualize categorical variables
@@ -404,9 +404,9 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     st.write("The train sets have " + str(train_X.shape[0]) + " rows, "
             "and the test sets have " + str(test_X.shape[0]) + " rows")
 
-    # outliers handeling
+    # outliers handling
     st.write(""" 
-             *Outliers handeling* 
+             *Outliers handling* 
              -
              As defined in the exploratory data analysis section:
              - Glucose values above 300 mg/dL were clipped.
@@ -441,7 +441,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
             -
             The missing data in these train sets were then imputed using:
             - The KNN imputer from sklearn using 5 n-nearest neighbours was applied to numerical features.
-            - The simple imputer from sklearn using the mode was applied to catagorical features.
+            - The simple imputer from sklearn using the mode was applied to categorical features.
             - The imputers were fitted only on train data and then applied to test to avoid data leakage.
             """)
 
@@ -637,8 +637,8 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
 
     # Whenever we select models or change anything, the whole code would rerun and this would take a
     # long time.
-    # We wanted to save eveything as a dataframe first, because we thought that would fix it like in colab,
-    # but in streamlit it doesnt work because eveything is rerun top to bottom.
+    # We wanted to save everything as a dataframe first, because we thought that would fix it like in colab,
+    # but in streamlit it does not work because everything is rerun top to bottom.
     # So we found this function that caches the data.
     @st.cache_data
     def compute_feature_rankings(train_X, train_y):
@@ -782,7 +782,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
         Fig = ConfusionMatrixDisplay.from_estimator(model, test_X[subsetused], test_y)
         Fig = Fig.figure_
 
-        #Since its now a dictionairy, we have to change the keys by removing and replacing the old ones
+        #Since its now a dictionary, we have to change the keys by removing and replacing the old ones
         #All the others are also done to keep the order the same. Otherwise survived and died would be at the end.
         #There is probably a more efficient way to do this but this is what we thought
         Acc = Dict["accuracy"]
