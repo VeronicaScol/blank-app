@@ -13,11 +13,11 @@ with st.expander("## GENERAL DESCRIPTION OF THE FRAMINGHAM HEART DISEASE STUDY")
     st.markdown("##  GENERAL OVERVIEW OF THE STUDY")
 
     st.write(
-        "The Framingham Heart Study is the **first prospective study** of cardiovascular disease (CVD). It was useful to identified CVD risks factors and their combined effects. " \
-        "The study began in 1948 among a population of free-living subjects in the community of Framingham, Massachusetts. Initially, 5209 people were enrolled. In the subset analyzed, there are **4434 patients**, each of them with **three examination periods** aproximately every 6 years. Each partecipant was followed for 24 years to detect the following outcomes: **angina pectoris, myocardial infraction, Atherothrombotic Infarction or Cerebral Hemorrhage (Stroke) or Death**."
+        "The Framingham Heart Study is the **first prospective study** of cardiovascular disease (CVD). It was used to identified CVD risks factors and their combined effects. " \
+        "The study began in 1948 among a population of free-living subjects in the community of Framingham, Massachusetts. Initially, 5209 people were enrolled. In the subset analyzed, there are **4434 patients**, each of them with **three examination periods** aproximately every 6 years. Each partecipant was followed for 24 years to detect the following outcomes: **angina pectoris, myocardial infraction, Atherothrombotic Infarction or Cerebral Hemorrhage (Stroke) or Death**. (1)"
     )
     #source: https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html
- 
+
     #data loading
     cvd = pd.read_csv('https://raw.githubusercontent.com/LUCE-Blockchain/Databases-for-teaching/refs/heads/main/Framingham%20Dataset.csv')
 
@@ -28,22 +28,24 @@ with st.expander("## GENERAL DESCRIPTION OF THE FRAMINGHAM HEART DISEASE STUDY")
 
     #observations about the data
     st.write(
-        "The dataset contains **39 features** including: demographic informations, clinical measurements, physiological risks factors, lifestyle, medications, baseline disease status, and follow up outcomes."
+        "The dataset contains **39 features** including: demographic information, clinical measurements, lifestyle, medications, prevalent diseases, and follow up outcomes."
     )
     st.write("The dataset includes multiple records for a single person (RANDID) and each row represents one **clinical examination**.")
 
 ## SECTION 2: RESEARCH QUESTION AND SUBSET CREATION
 with st.expander("## RESEARCH QUESTION AND SUBSET CREATION"):
 
-    st.markdown('## **To what extenct can baseline health indicators predict all-cause death?**')
+    st.markdown('## ***To what extenct can baseline health indicators predict all-cause death?***')
 
     st.markdown(
         """
+        This research aims to understand if baseline health indicators can predict all cause mortality with good performance. The objective is to assess the predictive power of these feature to flag subgroups at risk, not to create a tool for clinical decision making.
+
         To answer this research question, a subset of the original dataframe was created:
 
-        - only patients from period 1 were selected
-        - all the variables related to time and other possible outcomes were dropped
-        - HDL and LDL cholesterol were dropped as they were not available in period 1
+        - only patients from period 1 were selected,
+        - the features related to time and other possible outcomes were not included,
+        - HDL and LDL cholesterol were dropped as they were not available in period 1.
         """
     )
 
@@ -87,7 +89,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     st.markdown(
         """
         ### OVERVIEW:
-        1. Descriptive statistics 
+        1. Descriptive statistics
         2. Missing Values Analysis
         3. Outlier Detection
         4. Erroneous Data Detection
@@ -101,7 +103,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
     #1. Descriptive statistics
     st.markdown('###  *Descriptive Statistics*')
-    
+
     # table showing descriptive statistics for numerical variables
     st.write("Descriptive statistics of the **numerical variables**:")
     st.dataframe(cvd_death.describe())
@@ -113,13 +115,13 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #interpretation
     st.markdown(
         """
-        In this subset with patients from Period 1, 56% are women and 51% non-smokers. 
-        The majority are not diabetic and free of prevalent diseases. 
-        Most partecipants are middle-aged, with a mean of 50 years old. 
-        The mean cholesterol is 237 mg/dL, which is borderline high, and the mean BMI is 25.8 (overweight). 
-        The mean systolic (133 mmHg) and diastolic (83 mmHg) blood pressure suggest potential hypertensive individuals. 
+        In this subset with patients from Period 1, 56% are women and 51% non-smokers.
+        The majority are not diabetic and free of prevalent diseases.
+        Most partecipants are middle-aged, with a mean of 50 years old.
+        The mean cholesterol is 237 mg/dL, which is borderline high, and the mean BMI is 25.8 (overweight).
+        The mean systolic (133 mmHg) and diastolic (83 mmHg) blood pressure suggest potential hypertensive individuals.
         The mean glucose is 82 mg/dL, which represents normal levels.
-        A mean of 9 cigarettes per day is observed, even if many participants report zero. 
+        A mean of 9 cigarettes per day is observed, even if many participants report zero.
         It is possible to observe that the largest education group is secondary education.
         """
     )
@@ -135,22 +137,22 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #visual rapresentation of the missing data
     fig, ax = plt.subplots()
     ax.set(title = "Missing data",
-            xlabel = "Percent missing", 
+            xlabel = "Percent missing",
             ylabel = "Variable",
             xlim = [0, 10]);
-    
-    bars = ax.barh(missing_percentage.index, 
-                   missing_percentage.values, 
-                   color = 'lightblue', 
+
+    bars = ax.barh(missing_percentage.index,
+                   missing_percentage.values,
+                   color = 'lightblue',
                    edgecolor = 'black')
-    
+
     ax.bar_label(bars);
     st.pyplot(fig)
 
     #explanation
     st.write(
         """
-        There are a few missing values present in this subset: between 0.02% and 9% in 7 attributes.
+        There are a few missing values present in this subset: between 0.02% and 9% in 7 features.
 
         * Some self-reported variables (education 2.5%, blood pressure medication 1.4%, cigarettes per day 0.7%) are missing probably due to incomplete reporting.
         * Glucose shows the highest missingness, 8.95%.
@@ -158,20 +160,20 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
         It was decided to impute the missing values after the train/test split.
 
-        Imputation strategy:
+        *Imputation strategy*:
 
-        * **Numerical variables** were imputed using K-Nearest Neighbours imputation (k = 5)
-        * **Categorical variables** were imputed using the mode (most frequent value)
+        * **Numerical variables** were imputed using K-Nearest Neighbours imputation (k = 5).
+        * **Categorical variables** were imputed using the mode (most frequent value).
         """
     )
-    
+
 
     #3. Outliers
     st.markdown('###  *Outliers*')
 
-    # numerical variables 
+    # numerical variables
     num_variables = ['TOTCHOL', 'AGE', 'SYSBP', 'DIABP', 'CIGPDAY', 'BMI', 'HEARTRTE', 'GLUCOSE']
-    
+
     # description of numerical variables
     num_names = {
         'TOTCHOL' : 'Total Cholesterol (mg/dL)',
@@ -185,58 +187,58 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
     }
 
-    #slectbox to visulize a boxplot showing possible outliers 
+    #slectbox to visulize a boxplot showing possible outliers
     selected_variable = st.selectbox(
         "Select a numeric variable to visualize:",
         num_variables
     )
 
     fig, ax = plt.subplots()
-    sns.boxplot(data = cvd_death[selected_variable], orient = "v", ax = ax)
+    sns.boxplot(data = cvd_death[selected_variable], orient = "v")
     ax.set(title = num_names[selected_variable], xlabel = num_names[selected_variable], ylabel = 'Value')
     st.pyplot(fig)
 
     #explanation
     st.write(
         """
-        - Cholesterol levels higher than 500 mg/dL may indicate not only outliers, but also measurement errors. 
-        These extreme values are rare and usually related only to a few specific medical conditions (https://pubmed.ncbi.nlm.nih.gov/24404629/). 
+        - Cholesterol levels higher than 500 mg/dL may indicate not only outliers, but also measurement errors.
+        These extreme values are rare and usually related only to a few specific medical conditions (https://pubmed.ncbi.nlm.nih.gov/24404629/).
         Values lower than 500 mg/dL are physiologically possible and could be correlated to increased risk of CVD.
         - There are no outliers for age.
-        - In systolic blood pressure values higher than 180 mmHg indicate a hypertensive crisis, and high values are associated with CVD. However, systolic pressures above 260 mmHg may be related to measurement errors.
+        - Systolic blood pressure higher than 180 mmHg indicate a hypertensive crisis, and high values are associated with CVD. However, systolic pressures above 260 mmHg may be related to measurement errors.
         - In diastolic blood pressure values higher than 120 mmHg indicate a hypertensive crisis. These values were not removed because they are physiologically possible (https://www.ncbi.nlm.nih.gov/books/NBK507701/).
-        - For the number of cigaretts smoked per day, there were some values outside the IQR. It was decided to cap them at Q3, because even if these values are plausible are extremly high.
+        - For the number of cigarettes smoked per day, there were some values outside the IQR. It was decided to clip them at Q3, because even if these values are plausible, they are extremly high.
         - BMI values above 35 reflect an obese condition. BMI values higher than 50 are physiologically plausible.
         - Heart rate values between 40 and 140 bpm are plausible.
         - Very high glucose levels indicate diabetes. Values higher than 180 mg/dL indicate hyperglycemia. Extreme values around 400 mg/dL could be related to uncontrolled diabetes. Values over 300 mg/dL were considered as outliers, because these values imply emergency care. The glucose represented is casual serum glucose, which showed a relationship with increased risk of CVD and mortality (https://drc.bmj.com/content/9/1/e001928).
 
         ***Imputation strategy***
 
-        In the boxplot it is possible to visualize more datapoints which are not in the Inter Quartile Range, however it was decided to keep this numbers because they could be related to people with higher risk of developing an heart disease.
-        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated threshold were clipped at that specific value.
+        Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were clipped at that specific value.
+        The datapoints outside the interquartile range of number of cigarettes smokes per day were clipped at Q3.
+
         """
         )
 
     #4. Erroneous Data
     st.markdown('###  *Erroneous Data*')
     st.write("""
-             - As reported in the outlier detection, some values are extremly high and might be related to measurement errors or incorrect reporting. Especially in the values related to cholesterol and systolic blood pressure.
-             - It was decided to check for internal consistency: 
+                - It was decided to check for internal consistency:
                 - partecipants without diabetes are not expected to have glucose levels above 200 mg/dL (https://www.niddk.nih.gov/health-information/diabetes/overview/tests-diagnosis#:~:text=Table_title:%20Test%20results%20for%20diagnosis%20of%20prediabetes,Plasma%20Glucose:%20126%20mg/dL%20or%20above%20%7C)
                 - non-smokers should smoke 0 cigarettes per day,
                 - diastolic blood pressure can't be higher than systolic.
              """)
 
-    #High glucose levels: if a patient doesn't have diabetes but has a glucose higher than 120 mg/dL, this might be an erroneous data.
-    cvd_death[(cvd_death['DIABETES'] == 'not a diabetic') & (cvd_death['GLUCOSE'] > 200)]
+    #High glucose levels: if a patient doesn't have diabetes but has a glucose higher than 200 mg/dL, this might be an erroneous data.
+    cvd_death.loc[(cvd_death['DIABETES'] == 'not a diabetic') & (cvd_death['GLUCOSE'] > 200)]
     st.write('There are not patients without diabetes but with a glucose higher than 200 mg/dL. ')
 
     #Non smokers should smoke 0 cigarettes per day
-    cvd_death[(cvd_death['CURSMOKE'] == 'not current smoker') & (cvd_death['CIGPDAY'] > 0)]
+    cvd_death.loc[(cvd_death['CURSMOKE'] == 'not current smoker') & (cvd_death['CIGPDAY'] > 0)]
     st.write('None of the non-smokers report to smoke more than zero cigarettes per day.')
 
     #Diastolic blood pressure higher than systolic
-    cvd_death[(cvd_death['SYSBP'] < cvd_death['DIABP'])]
+    cvd_death.loc[(cvd_death['SYSBP'] < cvd_death['DIABP'])]
     st.write('There are no partecipants with diastolic blood pressure higher than systolic blood pressure.')
 
 
@@ -248,17 +250,17 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
 
     # Histogram
     fig2, ax = plt.subplots()
-    ax.hist(cvd_death[selected_hist], 
-            edgecolor = 'black', 
-            bins = 20, 
+    ax.hist(cvd_death[selected_hist],
+            edgecolor = 'black',
+            bins = 20,
             color = 'lightblue')
-    
-    ax.set(title = num_names[selected_hist], 
-           xlabel = num_names[selected_hist], 
+
+    ax.set(title = num_names[selected_hist],
+           xlabel = num_names[selected_hist],
            ylabel = 'Count')
     st.pyplot(fig2)
 
-    #description 
+    #description
     st.write(
         """
         * Cholesterol, systolic blood pressure, and glucose have a right-skewed normal distribution.
@@ -267,7 +269,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         * The number of cigarettes smoked shows a high number of zeros, due to non-smokers. The distribution of the other values roughly resembles a normal distribution.
         """
         )
-    
+
 
     #6. Categorical Variables visualization
 
@@ -297,22 +299,22 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     #barplot to visualize categorical variables
     fig3, ax = plt.subplots()
     counts = cvd_death[selected_bar].value_counts()
-    ax.bar(counts.index, 
-           counts.values, 
-           edgecolor = 'black', 
+    ax.bar(counts.index,
+           counts.values,
+           edgecolor = 'black',
            color = ['lightblue', 'lightpink'])
     ax.bar_label(ax.containers[0])
-    ax.set(title= categorical_names[selected_bar], xlabel= categorical_names[selected_bar], ylabel= 'Count')
+    ax.set(title = categorical_names[selected_bar], xlabel = categorical_names[selected_bar], ylabel = 'Count')
     st.pyplot(fig3)
 
     #explanation
-    st.markdown( 
-                """ 
-                The histograms are used to better visualize the population described with the descriptive statistics table. 
-                The dataset is balanced regarding sex and smoking status. 
-                However, it shows high imbalance for diabetic status, use of blood pressure medications, prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke), where only 0.7- 4.4% of the population shows. 
-                32.3% of the people have prevalent hypertension, and 16.4% report angina at the time of collection. 
-                The most common education level is higher secondary with 42.2%, followed by graduation with 29.6%. 
+    st.markdown(
+                """
+                The histograms are used to better visualize the population described with the descriptive statistics table.
+                The dataset is balanced regarding sex and smoking status.
+                However, it shows high imbalance for diabetic status, use of blood pressure medications, prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke), where only 0.7- 4.4% of the population shows.
+                32.3% of the people have prevalent hypertension, and 16.4% report angina at the time of collection.
+                The most common education level is higher secondary with 42.2%, followed by graduation with 29.6%.
                 """ )
 
     #7. Visualization of the Target Variable
@@ -338,26 +340,26 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     counts = cvd_death.groupby(['DEATH', selected_cat]).size().unstack()
 
     # Bar plot
-    ax = counts.plot(kind = 'bar', 
-                     edgecolor = 'black', 
-                     color = ['pink', 'lightblue', 'lightgreen', 'lightyellow'], 
+    ax = counts.plot(kind = 'bar',
+                     edgecolor = 'black',
+                     color = ['pink', 'lightblue', 'lightgreen', 'lightyellow'],
                      rot = 0)
     ax.set(title = categorical_names[selected_cat], xlabel = categorical_names[selected_cat], ylabel = 'Count')
     st.pyplot(ax.figure)
 
     # Explanation
-    st.markdown( """ 
-                From the bivariate analysis, it is possible to observe that 54.4% of the people who died were male, and there was a slightly higher percentage of smokers, 50.8%. 
-                There was higher proportion of diabetic people who use blood pressure medication and with prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke) in the death population. 
-                Remarkably is that 48.9% of the people who died had hypertension. 
+    st.markdown( """
+                From the bivariate analysis, it is possible to observe that 54.4% of the people who died were male, and there was a slightly higher percentage of smokers, 50.8%.
+                There was a higher proportion of diabetic people who use blood pressure medication and with prevalent diseases (coronary heart disease, angina pectoris, myocardial infarction, stroke) in the death population.
+                Remarkably is that 48.9% of the people who died had hypertension.
                 """ )
 
     # Gropby fuction to see the difference between died and survived for the categorical variables
-    st.write('Difference in numerical variables for death and survived')
+    st.write('Difference in numerical variables for death and survived:')
     mean_table = cvd_death.groupby('DEATH')[num_variables].mean()
     st.dataframe(mean_table)
     st.markdown("""
-                It is possible to observe that all the numerical variables are higher in the death population compared to the survived, indicating that higher values could be related to higher risk of death. 
+                It is possible to observe that all the numerical variables are higher in the death population compared to the survived, indicating that higher values could be related to higher risk of death.
                 """)
 
 ##SECTION 4: MISSING DATA IMPUTATION, ENCODING, SCALING
@@ -386,7 +388,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     # Train Test Split
 
     from sklearn.model_selection import train_test_split
-    train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.2, stratify = y, random_state=1)
+    train_X, test_X, train_y, test_y = train_test_split(X, y, test_size = 0.2, stratify = y, random_state = 1)
 
     st.write("""
             *Train-Test split*
@@ -403,6 +405,18 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     st.write("The train sets have " + str(train_X.shape[0]) + " rows, "
             "and the test sets have " + str(test_X.shape[0]) + " rows")
 
+    # outliers handeling
+    st.write(""" 
+             *Outliers handeling* 
+             -
+             As defined in the exploratory data analysis section:
+             - Glucose values above 300 mg/dL were clipped.
+             - Cholesterol values above 500 mg/dL were clipped.
+             - Systolic blood pressure values above 260 mmHg were clipped.
+             - The number of cigarettes smoked per day was clipped at the third quartile of the training set.
+             """)
+
+    
     # Define physiologically informed thresholds
     CIGPDAY_MAX = train_X['CIGPDAY'].quantile(0.75)
     GLUCOSE_MAX = 300
@@ -413,23 +427,23 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     test_X['CIGPDAY'] = test_X['CIGPDAY'].clip(upper = CIGPDAY_MAX)
 
     train_X['GLUCOSE'] = train_X['GLUCOSE'].clip(upper = GLUCOSE_MAX)
-    test_X['GLUCOSE'] = test_X['GLUCOSE'].clip(upper = GLUCOSE_MAX)    
+    test_X['GLUCOSE'] = test_X['GLUCOSE'].clip(upper = GLUCOSE_MAX)
 
     train_X['TOTCHOL'] = train_X['TOTCHOL'].clip(upper = TOTCHOL_MAX)
     test_X['TOTCHOL'] = test_X['TOTCHOL'].clip(upper = TOTCHOL_MAX)
 
-    train_X['SYSBP'] = train_X['SYSBP'].clip(upper = TOTCHOL_MAX)
-    test_X['SYSBP'] = test_X['SYSBP'].clip(upper = TOTCHOL_MAX)
-    
+    train_X['SYSBP'] = train_X['SYSBP'].clip(upper = SYSBP_MAX)
+    test_X['SYSBP'] = test_X['SYSBP'].clip(upper = SYSBP_MAX)
+
 
     # Imputing missing data
     st.write("""
             *Missing data imputation*
             -
             The missing data in these train sets were then imputed using:
-            - The KNN imputer from sklearn using 5 n-nearest neighbours was applied to numerical features
-            - The simple imputer from sklearn using the mode was applied to catagorical features
-            - The imputers were fitted only on train data and then applied to test to avoid data leakage
+            - The KNN imputer from sklearn using 5 n-nearest neighbours was applied to numerical features.
+            - The simple imputer from sklearn using the mode was applied to catagorical features.
+            - The imputers were fitted only on train data and then applied to test to avoid data leakage.
             """)
 
     from sklearn.impute import KNNImputer, SimpleImputer
@@ -449,10 +463,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
 
     #Displaying missing data
     st.write("""
-            The tables and graphs below show train_X for the full picture since test_X had less columns with missing values
-
-            Columns with missing values:
-
+            Columns with missing values in train_X:
             """)
     st.write(MissingCols)
 
@@ -465,7 +476,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     test_X[NumCols] = imputer.transform(test_X[NumCols])
 
     # Mode imputation
-    cat_imputer = SimpleImputer(missing_values=np.nan, strategy="most_frequent")
+    cat_imputer = SimpleImputer(missing_values = np.nan, strategy = "most_frequent")
     train_X[CatCol] = cat_imputer.fit_transform(train_X[CatCol])
     test_X[CatCol] = cat_imputer.transform(test_X[CatCol])
 
@@ -568,7 +579,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
             This was first fitted on the train set and then the train and test
             set were scaled using this scaler to avoid data leakage.
             """)
-    
+
 
 ##SECTION 5: FEATURE SELECTION AND MODEL TRAINING/TESTING
 with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
@@ -627,16 +638,16 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
 
     # Whenever we select models or change anything, the whole code would rerun and this would take a
     # long time.
-    # I wanted to save eveything as a dataframe first, because I thought that would fix it like in colab,
+    # We wanted to save eveything as a dataframe first, because we thought that would fix it like in colab,
     # but in streamlit it doesnt work because eveything is rerun top to bottom.
-    # So I found this function that caches the data and that seems to work.
+    # So we found this function that caches the data.
     @st.cache_data
     def compute_feature_rankings(train_X, train_y):
         #LogSelectionWrapper
-        estimator = LogisticRegression(class_weight='balanced', max_iter=1000)
+        estimator = LogisticRegression(class_weight = 'balanced', max_iter = 1000)
         selector = RFE(estimator,
-                    n_features_to_select=1, # Ranking now goes to 1 instead of having top 5
-                    step=1)
+                    n_features_to_select = 1, # Ranking now goes to 1 instead of having top 5
+                    step = 1)
         selector = selector.fit(train_X, train_y)
         featureRankingWrapperLog = pd.DataFrame(
             data=selector.ranking_,
@@ -699,15 +710,16 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
         WrapperHeatmap(featureRankingWrapperSVM)
     else:
         WrapperHeatmap(featureRankingWrapperRFC)
-    
+
     #explanation
     st.write("""
             ### *Feature selection analysis:*
-             Across all the methods tested some core predictors are: age, blood pressure, hypertension, diabetes and prior cardiovascular events.
-             Blood pressure medications and education levels score low among all the models. It was decided to create a custom feature subset removing these variables.
-             
-
-            """)
+             Across all the methods tested, some core predictors are: age, systolic blood pressure, prevalent coronary heart disease, and sex. Age is a strong indicator of death due to several biological reasons. The other high predictors might be related to a higher risk of developing a CVD.
+             Some features that rank low are smoker status and heart rate. 
+             Even if smoke status ranks low, the number of cigarettes smoked per day ranks mild-high for all the models. 
+             For this reason, it was decided not to exclude it. 
+             Regarding heart rate, this parameter could be excluded but it was decided to keep this value, as there are not many predictors and it is not an invasive measurement.
+             """)
 
 
     # Modelling
@@ -733,18 +745,18 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
                                 modeltypes,
                                 key="modelsel")
 
-    subsets = ["All features", "Top 15 wrapper features", "Top 15 filter features", "Final selection"] 
+    subsets = ["All features", "Top 15 wrapper features", "Top 15 filter features"]
     SelectedSubset = st.selectbox("Please select the features to be used:",
                                 subsets,
                                 key = "subsetsel")
     def ModelOutput(modelselectionanswer, subsetselectionanswer):
         #Checkign selected model
         if modelselectionanswer == "Logistic Regression":
-            model = LogisticRegression(class_weight='balanced')
+            model = LogisticRegression(class_weight = 'balanced')
         elif modelselectionanswer == "SVM":
-            model = SVC(class_weight='balanced', kernel="linear")
+            model = SVC(class_weight = 'balanced', kernel = "linear")
         else:
-                model = RandomForestClassifier(n_estimators=200, random_state=1,  class_weight="balanced", max_depth= 10)
+                model = RandomForestClassifier(n_estimators = 200, random_state = 1,  class_weight = "balanced", max_depth = 10)
 
         if subsetselectionanswer == "All features":
             subsetused = train_X.columns
@@ -756,15 +768,9 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
                 subsetused = Top15SVMWrap
             else:
                 subsetused = Top15RFCWrap
-        elif subsetselectionanswer == "Top 15 filter features":
-            subsetused = Top15Filter
         else:
-            train_X_custom = train_X.drop(columns = [
-                "BPMEDS_not currently used",
-                "educ_graduation",
-                "educ_post graduation",
-                "educ_higher secondary"])
-            subsetused = train_X_custom.columns
+            subsetused = Top15Filter
+        
 
         #Everything after this for models, needs to be done for every model
         model.fit(train_X[subsetused], train_y)
@@ -779,7 +785,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
 
         #Since its now a dictionairy, we have to change the keys by removing and replacing the old ones
         #All the others are also done to keep the order the same. Otherwise survived and died would be at the end.
-        #There is probably a more efficient way to do this but I could not find it
+        #There is probably a more efficient way to do this but this is what we thought
         Acc = Dict["accuracy"]
 
         Dict["survived"] = Dict.pop("0")
@@ -795,9 +801,16 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     ModelOutput(SelectedModel, SelectedSubset)
 
     st.write("""
-            All the models showed limited performance in predicting death. It was decided to select the random forest classifier as the best model.
-            It achieved the highest precision for the death class (0.605) and a recall of 0.61. Eventhough other models had higher recall, they showed lower precision.
-            This model was selected because it provided the most balance between identifying true deaths, without raising false alarms.
+             ### *Model performance*
+             All the models showed limited performance in predicting death.
+            
+             - The model with logistic regression that uses the top 15 wrapper features has the highest recall for the death class (0.7290). 
+             - The Random Forest classifier with the top 15 wrapper features shows the highest precision for the target class (0.6522). 
+             - The Support Vector Machine with the top 15 wrapper features has the highest F1-score (0.6512).
+            
+             When predicting death it is crucial to have a good balance between identifying true deaths, without raising false alarms. 
+             This is the reason why the SVM model was selected as the best one.
+
             """)
 
 
@@ -822,17 +835,17 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     from sklearn.model_selection import cross_validate
 
     # New final model since the last is only in the function and not saved outside
-    ModelFinal = RandomForestClassifier(n_estimators=200, random_state=1,  class_weight="balanced", max_depth= 10)
+    ModelFinal = RandomForestClassifier(n_estimators = 200, random_state = 1,  class_weight = "balanced", max_depth = 10)
 
     # Scoring methods that are used, macro is because of class inbalance
     scoring = ["accuracy", "roc_auc", "f1_macro", "precision_macro", "recall_macro"]
 
     #cross validation used
-    cv = RepeatedKFold(n_splits=5, n_repeats=10, random_state=1)
+    cv = SVC(class_weight = 'balanced', kernel = "linear", probability = True)
 
     #Same code as before but now outside of the function
     # and if statements so it is saved and can be used
-    train_X_crossval = train_X
+    train_X_crossval = train_X[Top15SVMWrap]
 
     # This is again a step that takes long so its cached,
     #  nothing is passed to the function because that is giving
@@ -852,7 +865,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     # Running it once
     scores_initial = run_cv()
 
-    # making it a dataframe so I can use mean() and std()
+    # making it a dataframe so we can use mean() and std()
     scores_df = pd.DataFrame(scores_initial)
 
     # Extracting the scores from that dataframe, might be a better way than this manual way
@@ -877,9 +890,9 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     st.write(
         """
         # *CONCLUSION*
-        The final model achieved a cross-validated ROC AUC of 0.7811 and a F1 score of 0.7166. 
+        The final model achieved a cross-validated ROC AUC of 0.7853 and a F1 score of 0.7171.
         The discriminative performance is low and it can't be used in clinical settings.
-        It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death. 
+        It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death.
         Further research could be done on period 2 and 3 to visualize how these follow-up periods modify the performance.
         Additionally, all cause death prediction is challenging as there could be different causes, which are not captured by limited health indicators.
         It might be informative to compare these results to death caused by CVD.
