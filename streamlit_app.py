@@ -38,7 +38,7 @@ with st.expander("## RESEARCH QUESTION AND SUBSET CREATION"):
 
     st.markdown(
         """
-        This research aims to understand if baseline health indicators can predict all cause mortality with good performance. The objective is to assess the predictive power of these feature to flag subgroups at risk, not to create a tool for clinical decision making.
+        This research aims to understand if baseline health indicators can predict all cause mortality with good performance. The objective is to assess the predictive power of these features to flag subgroups at risk, not to create a tool for clinical decision making.
 
         To answer this research question, a subset of the original dataframe was created:
 
@@ -370,7 +370,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
             *Features used in the model*
             -
             """)
-    st.write("Several time-related features were removed from the dataframe, and the dataframe was split into X and y which resulted in these final dataframes:")
+    st.write("The dataframe was split into X and y which resulted in these final dataframes:")
 
     cvd_death['DEATH'] = cvd_death['DEATH'].replace({'survived': 0, 'died': 1});
     X = cvd_death[['SEX', 'CURSMOKE', 'DIABETES', 'BPMEDS', 'PREVCHD', 'PREVAP',
