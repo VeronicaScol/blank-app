@@ -204,9 +204,9 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         These extreme values are rare and usually related only to a few specific medical conditions (2).
         Values lower than 500 mg/dL are physiologically possible and could be correlated to increased risk of CVD.
         - There are no outliers for age.
-        - Systolic blood pressure higher than 180 mmHg indicate a hypertensive crisis (3). Values above 260 mmHg were considered outliers.
+        - Systolic blood pressure higher than 180 mmHg indicates a hypertensive crisis (3). Values above 260 mmHg were considered outliers.
         - In diastolic blood pressure values higher than 120 mmHg indicate a hypertensive crisis. However, these values were not removed because they remain physiologically possible (3).
-        - For the number of cigarettes smoked per day, few values were outside the interquirtile range (IQR). Even if these values are plausible, it was decided to clip them at Q3.
+        - For the number of cigarettes smoked per day, few values were outside the interquartile range (IQR). Even if these values are plausible, it was decided to clip them at Q3.
         - BMI values above 35 reflect an obese condition. Even if outside the IQR, values higher than 50 are physiologically plausible.
         - Heart rate values between 40 and 140 bpm are possible.
         - Very high glucose levels are indicative of diabetes. Values higher than 180 mg/dL indicate hyperglycemia, and extreme values around 400 mg/dL could be related to uncontrolled diabetes. Values over 300 mg/dL were considered as outliers, because these values imply emergency care. The glucose represented is casual serum glucose, which showed a relationship with increased risk of CVD and mortality (4).
@@ -214,7 +214,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
         ***Imputation strategy***
 
         Cholesterol, Systolic Blood Pressure and Glucose above the previously stated thresholds were windsorized at the corrisponding upper limit. This methodology was preferred over removing these values to preserve their clinical meaning.
-        The datapoints outside the interquartile range for the number of cigarettes smokes per day were clipped at the third quartile.
+        The datapoints outside the interquartile range for the number of cigarettes smoked per day were clipped at the third quartile.
 
         """
         )
@@ -223,22 +223,22 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
     st.markdown('###  *Erroneous Data*')
     st.write("""
                 - It was decided to check for internal consistency:
-                - partecipants without diabetes were not expected to have glucose levels above 200 mg/dL (5)
+                - participants without diabetes were not expected to have glucose levels above 200 mg/dL (5)
                 - non-smokers were expected to smoke 0 cigarettes per day,
                 - diastolic blood pressure cannot be higher than systolic blood pressure.
              """)
 
     #High glucose levels: if a patient doesn't have diabetes but has a glucose higher than 200 mg/dL, this might be an erroneous data.
     cvd_death.loc[(cvd_death['DIABETES'] == 'not a diabetic') & (cvd_death['GLUCOSE'] > 200)]
-    st.write('There are no patients without diabete,s but with a glucose higher than 200 mg/dL. ')
+    st.write('There are no patients without diabetes but with a glucose higher than 200 mg/dL. ')
 
     #Non smokers should smoke 0 cigarettes per day
     cvd_death.loc[(cvd_death['CURSMOKE'] == 'not current smoker') & (cvd_death['CIGPDAY'] > 0)]
-    st.write('None of the non-smokers report to smoke more than zero cigarettes per day.')
+    st.write('None of the non-smokers reports smoking more than zero cigarettes per day.')
 
     #Diastolic blood pressure higher than systolic
     cvd_death.loc[(cvd_death['SYSBP'] < cvd_death['DIABP'])]
-    st.write('There are no partecipants with diastolic blood pressure higher than systolic blood pressure.')
+    st.write('There are no participants with diastolic blood pressure higher than systolic blood pressure.')
 
 
     #5. Distribution of numerical variables
@@ -354,7 +354,7 @@ with st.expander("## EXPLORATORY DATA ANALYSIS"):
                 """ )
 
     # Gropby fuction to see the difference between died and survived for the categorical variables
-    st.write('Difference in numerical variables for death and survived:')
+    st.write('Difference in numerical variables for death and survival:')
     mean_table = cvd_death.groupby('DEATH')[num_variables].mean()
     st.dataframe(mean_table)
     st.markdown("""
@@ -480,7 +480,7 @@ with st.expander("## MISSING DATA IMPUTATION, ENCODING, SCALING"):
     test_X[CatCol] = cat_imputer.transform(test_X[CatCol])
 
     # Creating a select box for a feature to check
-    selected_discheck = st.selectbox("Select a feature to check if distributions after imputation are the similar and have not been affected:",
+    selected_discheck = st.selectbox("Select a feature to check if distributions after imputation are similar and have not been affected:",
                                     missing_col_names,
                                     key = "discheck")
 
@@ -597,7 +597,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
 
     st.write("""
             The ANOVA filter ranks features by testing if mean values differ
-            significantly between target groups. Each feature is evaluated seperately
+            significantly between target groups. Each feature is evaluated separately
             so the ranking depends only on the statistical test, not on the predictive model
             or interactions between features.
             """)
@@ -626,8 +626,8 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
     st.write("""
             *Wrapper feature selection*
             -
-            Since wrapper feature selection looks at the variables in relation to eachother,
-            the type of model is also infuential in the resulting ranking
+            Since wrapper feature selection looks at the variables in relation to each other,
+            the type of model is also influential in the resulting ranking
             """)
 
     from sklearn.linear_model import LogisticRegression
@@ -729,7 +729,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
 
             The models (from SKlearn):
             - Support Vector Classifier with a linear kernel
-            - Logistig Regression
+            - Logistic Regression
             - Random Forest Classifier with 200 estimators, random state 1 and a max depth of 10
             - All models use a balanced class weight
 
@@ -890,7 +890,7 @@ with st.expander("## FEATURE SELECTION AND MODEL TRAINING/TESTING"):
         To answer this research question, a subset of the initial dataset was created and data exploration and cleaning were performed. 
         Several models were used to predict death. The best model was Support Vector Machine with the top 15 wrapper features. It achieved a cross-validated ROC AUC of 0.7972 and a macro F1 score of 0.7078.
         The discriminative performance of this model is low and it can't be used in clinical settings.
-        It is possible to conclude that the baseline health indicators alone are not sufficient to predict all cause death.
+        It is possible to conclude that the baseline health indicators alone are not sufficient to predict all-cause death.
         """
     )
 
